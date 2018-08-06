@@ -24,7 +24,7 @@ html, body{
 </head>
 <body>
 <div id="list_div">
-  <ul class="pagination" id="list">
+  <ul class="list-unstyled" id="list">
   </ul>
 </div>
 
@@ -58,8 +58,8 @@ html, body{
   </canvas>
 
   <br/>
-  <input type="button" value="reset" onClick="resetCanvas();"/>
-  <input type="button" value="save" onClick="save();"/>
+  <input type="button" class="btn btn-xs btn-info" value="reset" onClick="resetCanvas();"/>
+  <input type="button" class="btn btn-xs btn-success" value="save" onClick="save();"/>
 </div>
 
 <script>
@@ -250,7 +250,7 @@ function getDocuments(){
         documents.forEach( function( doc ){
           console.log( doc );
           var li = '<li><a href="#" onClick="loadAttachment(\'' + doc._id + '\');">' + timestamp2datetime( doc.timestamp ) + '</a>'
-            + '<input type="button" value="delete" onClick="deleteAttachment(\'' + doc._id + '\');"/>'
+            + '<input type="button" class="btn btn-xs btn-danger" value="delete" onClick="deleteAttachment(\'' + doc._id + '\');"/>'
             + '</li>';
           $('#list').append( li );
         });
