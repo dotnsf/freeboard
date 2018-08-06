@@ -23,9 +23,8 @@ html, body{
 </style>
 </head>
 <body>
-<div id="list_div">
-  <ul class="list-unstyled" id="list">
-  </ul>
+
+<div id="list" class="list-group">
 </div>
 
 <select id="select_color" name="select_color">
@@ -249,17 +248,16 @@ function getDocuments(){
         var documents = result.docs;
         documents.forEach( function( doc ){
           console.log( doc );
-          var li = '<li><a href="#" onClick="loadAttachment(\'' + doc._id + '\');">' + timestamp2datetime( doc.timestamp ) + '</a>'
-            + '<input type="button" class="btn btn-xs btn-danger" value="delete" onClick="deleteAttachment(\'' + doc._id + '\');"/>'
-            + '</li>';
+          var li = '<a class="list-group-item list-group-item-action" href="#" onClick="loadAttachment(\'' + doc._id + '\');">' + timestamp2datetime( doc.timestamp )
+            + '<input type="button" class="btn btn-xs btn-danger" value="delete" onClick="deleteAttachment(\'' + doc._id + '\');"/></a>';
           $('#list').append( li );
         });
       }
 
       //. Pagenation
-      var li1 = '<li' + ( doc_page > 0 ? '' : ' class="disabled"' ) + '><a href="#"' + ( doc_page > 0 ? ' onClick="prevPage()"' : '' ) + '>&laquo;</a></li>';
+      var li1 = '<a class="list-group-item list-group-item-action' + ( doc_page > 0 ? '' : ' disabled' ) + '" href="#"' + ( doc_page > 0 ? ' onClick="prevPage()"' : '' ) + '>&laquo;</a>';
       $('#list').prepend( li1 );
-      var li2 = '<li' + ( documents.length == doc_limit ? '' : ' class="disabled"' ) + '><a href="#"' + ( documents.length == doc_limit ? ' onClick="nextPage()"' : '' ) + '>&raquo;</a></li>';
+      var li2 = '<a class="list-group-item list-group-item-action' + ( documents.length == doc_limit ? '' : ' disabled' ) + '" href="#"' + ( documents.length == doc_limit ? ' onClick="nextPage()"' : '' ) + '>&raquo;</a>';
       $('#list').append( li2 );
     },
     error: function(){
