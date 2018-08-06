@@ -4,6 +4,8 @@
 <meta charset="UTF-8"/>
 <title>HTML5 Canvas Draw sample</title>
 <script type="text/javascript" src="//code.jquery.com/jquery-2.2.4.min.js"></script>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script src="./cvi_busy_lib.js"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -18,25 +20,12 @@ html, body{
 #mycanvas{
   border: 1px solid #333;
 }
-#list_div{
-  width: 80%;
-}
-#list td, th{
-  font-size: 0.4em;
-  width: 80%;
-  border: 1px #000 solid;
-}
 </style>
 </head>
 <body>
-<divid="list_div">
-  <table id="list">
-    <thead>
-      <tr><th>#</th><th>Datetime</th><th>Actions</th></tr>
-    </thead>
-    <tbody id="documents_tbody">
-    </tbody>
-  </table>
+<div id="list_div">
+  <ul class="pagination" id="list">
+  </ul>
 </div>
 
 <select id="select_color" name="select_color">
@@ -70,7 +59,7 @@ html, body{
 
   <br/>
   <input type="button" value="reset" onClick="resetCanvas();"/>
-  <input type="button" value="check" onClick="check();"/>
+  <input type="button" value="save" onClick="save();"/>
 </div>
 
 <script>
@@ -204,7 +193,7 @@ function resetCanvas(){
   ctx.stroke();
 }
 
-function check(){
+function save(){
   var canvas = document.getElementById( 'mycanvas' );
   if( !canvas || !canvas.getContext ){
     return false;
@@ -249,7 +238,7 @@ function check(){
 var doc_limit = 5;
 var doc_page = 0;
 function getDocuments(){
-  $('#documents_tbody').html( '' );
+  $('#list').html( '' );
   var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'loading', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
   $.ajax({
     type: 'GET',
@@ -260,30 +249,33 @@ function getDocuments(){
         var documents = result.docs;
         documents.forEach( function( doc ){
           console.log( doc );
-          var tr = '<tr>'
-            + '<td><a onClick="loadAttachment(\'' + doc._id + '\');" href="#">' + doc.timestamp + '</a></td>'
-            + '<td>' + timestamp2datetime( doc.timestamp ) + '</td>'
-            + '<td><input type="button" value="delete" onClick="deleteAttachment(\'' + doc._id + '\');"/></td>'
-            + '</tr>';
-          $('#documents_tbody').append( tr );
+          var li = '<li><a href="#" onClick="loadAttachment(\'' + doc._id + '\');">' + timestamp2datetime( doc.timestamp ) + '</a>'
+            + '<input type="button" value="delete" onClick="deleteAttachment(\'' + doc._id + '\');"/>'
+            + '</li>';
+          $('#list').append( li );
         });
       }
 
-      //. Navigation
-      var table = '<table class="table">'
-        + '<tr>'
-        + '<td style="text-align:left;" id="document_prev">&lt;&lt;</td>'
-        + '<td style="text-align:right;" id="document_next">&gt;&gt;</td>'
-        + '</tr>'
-        + '</table>';
-      $('#documents_tbody').parent().append( table );
-      enablePrev( ( doc_page > 0 ) );
-      enableNext( ( documents.length == doc_limit ) );
+      //. Pagenation
+      var li1 = '<li' + ( doc_page > 0 ? '' : ' class="disabled"' ) + '><a href="#"' + ( doc_page > 0 ? ' onClick="prevPage()"' : '' ) + '>&laquo;</a></li>';
+      $('#list').prepend( li1 );
+      var li2 = '<li' + ( documents.length == doc_limit ? '' : ' class="disabled"' ) + '><a href="#"' + ( documents.length == doc_limit ? ' onClick="nextPage()"' : '' ) + '>&raquo;</a></li>';
+      $('#list').append( li2 );
     },
     error: function(){
 
     }
   });
+}
+
+function prevPage(){
+  doc_page --;
+  getDocuments();
+}
+
+function nextPage(){
+  doc_page ++;
+  getDocuments();
 }
 
 function enablePrev( b ){
