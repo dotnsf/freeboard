@@ -249,7 +249,9 @@ function getDocuments(){
         documents.forEach( function( doc ){
           console.log( doc );
           var li = '<a class="list-group-item list-group-item-action" href="#" onClick="loadAttachment(\'' + doc._id + '\');">' + timestamp2datetime( doc.timestamp )
-            + '<input type="button" class="btn btn-xs btn-danger" value="delete" onClick="deleteAttachment(\'' + doc._id + '\');"/></a>';
+            //+ '<input type="button" class="btn btn-xs btn-danger" value="delete" onClick="deleteAttachment(\'' + doc._id + '\');"/>'
+            + '<span class="badge badge-danger badge-pill" onClick="deleteAttachment(\'' + doc._id + '\');">DEL</span>'
+            + '</a>';
           $('#list').append( li );
         });
       }
@@ -352,6 +354,7 @@ function deleteAttachment( doc_id ){
       }
     });
   }
+  return false;
 }
 
 function timestamp2datetime( ts ){
