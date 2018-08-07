@@ -24,7 +24,7 @@ html, body{
 </head>
 <body>
 
-<div id="list" class="list-group">
+<div id="list">
 </div>
 
 <select id="select_color" name="select_color">
@@ -164,7 +164,7 @@ $(function(){
     e.preventDefault();
   });
 
-  resetCanvas();
+  //resetCanvas();
   getDocuments();
 });
 
@@ -176,6 +176,7 @@ function resized(){
     canvas.width = browserWidth * 0.8;
     canvas.height = browserHeight * 0.5;
   }
+  resetCanvas();
 }
 
 function resetCanvas(){
@@ -246,21 +247,32 @@ function getDocuments(){
       obj.remove();
       if( result.status ){
         var documents = result.docs;
+        var select = '<select id="select1"><option value="" selected>(Select One)</option>';
         documents.forEach( function( doc ){
           console.log( doc );
-          var li = '<a class="list-group-item list-group-item-action" style="height:40px;padding:10px 15px;" href="#" onClick="loadAttachment(\'' + doc._id + '\');">' + timestamp2datetime( doc.timestamp )
-            //+ '<input type="button" class="btn btn-xs btn-danger" value="delete" onClick="deleteAttachment(\'' + doc._id + '\');"/>'
-            + '<span class="badge badge-danger badge-pill" onClick="deleteAttachment(\'' + doc._id + '\');">DEL</span>'
-            + '</a>';
-          $('#list').append( li );
+          var opt = '<option value="' + doc._id + '">' + timestamp2datetime( doc.timestamp ) + '</option>';
+          select += opt;
+
+        });
+        select += '</select>';
+        select += '<input type="button" class="btn btn-sm btn-danger" style="height:28px;border:0.99;" value="DELETE" onClick="deleteSelected();"/>'
+
+        //. Pagenation
+        var a1 = '<a' + ( doc_page > 0 ? '' : ' class="disabled"' ) + ' style="text-decoration:none;" href="#"' + ( doc_page > 0 ? ' onClick="prevPage()"' : '' ) + '>&lt;&lt;</a>';
+        select = a1 + select;
+        var a2 = '<a' + ( documents.length == doc_limit ? '' : ' class="disabled"' ) + ' style="text-decoration:none;" href="#"' + ( documents.length == doc_limit ? ' onClick="nextPage()"' : '' ) + '>&gt;&gt;</a>';
+        select = select + a2;
+
+        $('#list').html( select );
+        $('#select1').change( function(){
+          var doc_id = $(this).val();
+          if( doc_id ){
+            loadAttachment( doc_id );
+          }else{
+            resetCanvas();
+          }
         });
       }
-
-      //. Pagenation
-      var li1 = '<a class="list-group-item list-group-item-action' + ( doc_page > 0 ? '' : ' disabled' ) + '" style="height:40px;padding:10px 15px;" href="#"' + ( doc_page > 0 ? ' onClick="prevPage()"' : '' ) + '>&laquo;</a>';
-      $('#list').prepend( li1 );
-      var li2 = '<a class="list-group-item list-group-item-action' + ( documents.length == doc_limit ? '' : ' disabled' ) + '" style="height:40px;padding:10px 15px;" href="#"' + ( documents.length == doc_limit ? ' onClick="nextPage()"' : '' ) + '>&raquo;</a>';
-      $('#list').append( li2 );
     },
     error: function(){
 
@@ -337,6 +349,11 @@ function loadAttachment( doc_id ){
   });
 
   return false;
+}
+
+function deleteSelected(){
+  var doc_id = $('#select1').val();
+  deleteAttachment( doc_id );
 }
 
 function deleteAttachment( doc_id ){
