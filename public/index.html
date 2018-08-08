@@ -133,15 +133,16 @@ $(function(){
   //. タッチしたら、描画OK(myDrawをtrue)
   canvas.addEventListener( "touchstart", function( e ){
     var t = e.changedTouches[0];
+    var rect = t.target.getBoundingClientRect();
     mouse.isDrawing = true;
-    mouse.startX = t.pageX;
-    mouse.startY = t.pageY;
+    mouse.startX = t.pageX - rect.left - borderWidth;
+    mouse.startY = t.pageY - rect.top - borderWidth;
   });
   //. タッチを上げたら、描画禁止(myDrawをfalse)
   canvas.addEventListener( "touchend", function( e ){
     mouse.isDrawing = false;
   });
-  canvas.addEventListener( 'mouseleave', function( e ){
+  canvas.addEventListener( 'touchcancel', function( e ){
     mouse.isDrawing = false;
   });
 
